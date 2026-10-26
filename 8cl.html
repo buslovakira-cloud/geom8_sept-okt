@@ -1,0 +1,717 @@
+<meta name="claude:viewport-fit-sides" content="cover">
+<title>Четырёхугольники 8 класс</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Marck+Script&family=Onest:wght@400;500;600;700&family=Unbounded:wght@600;700&display=swap">
+<style>
+/* Концепт: тетрадный лист в клетку. У каждой фигуры свой цвет ручки; он ведёт её через карточки, дерево и таблицу. */
+:root{
+  --bg:#F3F5FB; --grid:#E1E7F4; --paper:#FFFFFF; --ink:#1A2138; --muted:#566080; --line:#CFD7EA; --soft:#EAEFFA;
+  --quad:#56658A; --para:#2F6FDE; --trap:#C45F0B; --rect:#0E7F5C; --rhomb:#B8347F; --sq:#D43F36; --cmp:#7A5AC8;
+  --on:#FFFFFF; --good:#0E7F5C; --again:#C45F0B;
+  --f-display:'Unbounded','Onest',system-ui,sans-serif; --f-body:'Onest',system-ui,sans-serif; --f-hand:'Marck Script','Onest',cursive;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#11141E; --grid:#1A2030; --paper:#1A1F2E; --ink:#EDF0FA; --muted:#9AA4C2; --line:#2C3450; --soft:#232A3E;
+    --quad:#9DAEDB; --para:#7BA3FF; --trap:#F5A05A; --rect:#45D3A2; --rhomb:#EE76B8; --sq:#FF8277; --cmp:#B49BFF;
+    --on:#0F1220; --good:#45D3A2; --again:#F5A05A; color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#11141E; --grid:#1A2030; --paper:#1A1F2E; --ink:#EDF0FA; --muted:#9AA4C2; --line:#2C3450; --soft:#232A3E;
+  --quad:#9DAEDB; --para:#7BA3FF; --trap:#F5A05A; --rect:#45D3A2; --rhomb:#EE76B8; --sq:#FF8277; --cmp:#B49BFF;
+  --on:#0F1220; --good:#45D3A2; --again:#F5A05A; color-scheme:dark;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{
+  background-color:var(--bg);
+  background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);
+  background-size:22px 22px; color:var(--ink); font:400 16px/1.5 var(--f-body);
+  padding-block:18px 48px;
+  padding-left:max(16px,env(safe-area-inset-left,0px));
+  padding-right:max(16px,env(safe-area-inset-right,0px));
+}
+button{font:inherit;color:inherit;cursor:pointer}
+:focus-visible{outline:3px solid var(--para);outline-offset:2px}
+.wrap{max-width:640px;margin:0 auto;display:grid;gap:14px}
+.stack{display:grid;gap:14px}
+.eyebrow{margin:0;font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:600}
+h1{margin:4px 0 0;font:700 clamp(21px,6.2vw,30px)/1.15 var(--f-display);overflow-wrap:anywhere}
+
+.tabs{display:grid;grid-template-columns:repeat(3,1fr);gap:4px;padding:4px;background:var(--paper);border:1px solid var(--line);border-radius:14px}
+.tabs button{border:0;background:transparent;padding:10px 6px;border-radius:10px;font:600 14px var(--f-body);color:var(--muted)}
+.tabs button[aria-selected="true"]{background:var(--ink);color:var(--paper)}
+
+.chips{display:flex;gap:8px;overflow-x:auto;padding:3px 3px 6px;margin-inline:-3px;scrollbar-width:none}
+.chips::-webkit-scrollbar{display:none}
+.chip{flex:none;border:1.5px solid var(--c,var(--ink));background:var(--paper);color:var(--c,var(--ink));padding:7px 13px;border-radius:999px;font:600 13.5px var(--f-body);white-space:nowrap}
+.chip[aria-pressed="true"]{background:var(--c,var(--ink));color:var(--on)}
+.seg{display:flex;gap:6px;flex-wrap:wrap}
+.seg button{border:1px solid var(--line);background:var(--paper);padding:5px 11px;border-radius:8px;font:500 13px var(--f-body);color:var(--muted)}
+.seg button[aria-pressed="true"]{background:var(--soft);border-color:var(--ink);color:var(--ink);font-weight:600}
+
+.prog{display:grid;gap:6px}
+.prog-row{display:flex;justify-content:space-between;gap:4px 12px;font-size:13px;color:var(--muted);flex-wrap:wrap}
+.prog-row b{color:var(--ink);font-variant-numeric:tabular-nums}
+.bar{height:6px;border-radius:3px;background:var(--line);overflow:hidden}
+.bar i{display:block;height:100%;width:0;background:var(--ink);transition:width .25s}
+
+.scene{perspective:1400px}
+.card{display:block;position:relative;border-radius:20px;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.flip{display:grid;transform-style:preserve-3d;transition:transform .5s cubic-bezier(.3,.7,.2,1)}
+.card.is-back .flip{transform:rotateY(180deg)}
+.face{
+  grid-area:1/1;backface-visibility:hidden;-webkit-backface-visibility:hidden;min-height:390px;
+  background:var(--paper);border:1.5px solid var(--line);border-radius:20px;padding:16px 18px 18px;
+  display:flex;flex-direction:column;gap:12px;box-shadow:0 14px 28px -20px rgba(20,30,70,.45);
+}
+.face.back{transform:rotateY(180deg);border-color:var(--c)}
+.fh{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+.tag{background:var(--c);color:var(--on);font:600 12px var(--f-body);letter-spacing:.04em;padding:4px 10px;border-radius:8px 8px 8px 2px}
+.kind{font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);font-weight:600;display:flex;gap:8px;align-items:center}
+.st{text-transform:none;letter-spacing:0;font-size:12px;padding:2px 7px;border-radius:6px;border:1px solid currentColor}
+.st.k{color:var(--good)} .st.a{color:var(--again)}
+.q{margin:0;font:600 20px/1.3 var(--f-body);text-wrap:balance}
+.lab{margin:0;font-size:11px;letter-spacing:.1em;text-transform:uppercase;font-weight:700;color:var(--c)}
+.fig{display:grid;place-items:center;flex:1;min-height:0}
+.fig svg{width:100%;max-width:250px;height:auto}
+.tip{margin:auto 0 0;font-size:12.5px;color:var(--muted);text-align:center}
+.a{margin:0;font-size:17px;line-height:1.5}
+.a ul{margin:0;padding-left:20px;display:grid;gap:6px}
+.a b{color:var(--c)}
+.note{font-family:var(--f-hand);font-size:22px;line-height:1.25;background:color-mix(in srgb,var(--c) 12%,var(--paper));border:1.5px dashed var(--c);border-radius:12px;padding:9px 14px 11px;color:var(--ink)}
+.note small{display:block;font:700 11px var(--f-body);letter-spacing:.1em;text-transform:uppercase;color:var(--c);margin-bottom:2px}
+.empty{padding:34px 20px;text-align:center;background:var(--paper);border:1.5px dashed var(--line);border-radius:18px;color:var(--muted);min-height:200px;display:grid;place-content:center;gap:6px}
+.empty b{color:var(--ink);font-size:17px}
+
+.ctl{display:grid;grid-template-columns:48px 1fr 1fr 48px;gap:8px}
+.ctl button{min-height:50px;border-radius:14px;border:1.5px solid var(--line);background:var(--paper);font:600 15px var(--f-body)}
+.ctl button:disabled{opacity:.4;cursor:default}
+.ctl .nav{font-size:20px}
+.ctl .again{border-color:var(--again);color:var(--again)}
+.ctl .know{background:var(--good);border-color:var(--good);color:var(--on)}
+.row2{display:flex;gap:14px;justify-content:center;flex-wrap:wrap}
+.link{background:none;border:0;color:var(--muted);font-size:13px;text-decoration:underline;text-underline-offset:3px;padding:6px}
+
+.panel{background:var(--paper);border:1.5px solid var(--line);border-radius:18px;padding:14px}
+.lead{margin:0 0 8px;color:var(--muted);font-size:14px}
+.tree svg.t{width:100%;height:auto;display:block}
+.node{cursor:pointer}
+.node rect.nb{fill:var(--paper);stroke:var(--c);stroke-width:2}
+.node:hover rect.nb,.node:focus-visible rect.nb{fill:color-mix(in srgb,var(--c) 10%,var(--paper))}
+.node:focus-visible{outline:none}
+.node:focus-visible rect.nb{stroke-width:3.5}
+.node text{font-family:var(--f-body)}
+.node .nm{font-weight:700;font-size:13.5px;fill:var(--c)}
+.node .sb{font-size:11.5px;fill:var(--muted)}
+.edge{fill:none;stroke:var(--muted);stroke-width:1.8}
+.lore{display:grid;gap:10px;margin:14px 0 0;padding:0;list-style:none;font-size:15px}
+.lore b{color:var(--ink)}
+
+.tools{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.legend{font-size:13px;color:var(--muted)}
+.tw{overflow-x:auto;border:1.5px solid var(--line);border-radius:14px;background:var(--paper)}
+table{border-collapse:separate;border-spacing:0;min-width:540px;width:100%;font-size:14px}
+th,td{padding:8px 6px;border-bottom:1px solid var(--line);text-align:center}
+tbody tr:last-child td{border-bottom:0}
+th:first-child,td:first-child{text-align:left;position:sticky;left:0;background:var(--paper);min-width:150px;padding-left:12px;z-index:1}
+thead th{vertical-align:bottom;color:var(--c);font:700 12px/1.2 var(--f-body)}
+thead th svg{display:block;margin:0 auto 4px;width:54px;height:auto}
+tr.grp th{background:var(--soft);text-align:left;font:700 11px var(--f-body);letter-spacing:.08em;text-transform:uppercase;color:var(--muted);padding:6px 12px}
+tbody th{font-weight:500;text-align:left}
+.cell{border:0;background:none;width:36px;height:36px;border-radius:9px;font:700 18px var(--f-body)}
+.cell::after{content:attr(data-s)}
+.cell[data-v="1"]{color:var(--good)}
+.cell[data-v="0"]{color:var(--muted);font-weight:500}
+.quiz .cell:not(.open){background:var(--soft);color:var(--muted);font-weight:600}
+.quiz .cell:not(.open)::after{content:"?"}
+
+/* чертежи */
+.fsv .body{fill:color-mix(in srgb,var(--c) 14%,transparent);stroke:var(--c);stroke-width:2.6;stroke-linejoin:round}
+.fsv .sh2{fill:color-mix(in srgb,var(--c) 32%,transparent);stroke:none}
+.fsv .mk{fill:none;stroke:var(--ink);stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+.fsv .dg{fill:none;stroke:var(--muted);stroke-width:1.6;stroke-dasharray:5 4}
+.fsv .dg2{fill:none;stroke:var(--c);stroke-width:3;stroke-linecap:round}
+.fsv .lt{fill:var(--ink);font:600 12px var(--f-body)}
+.fsv .dot{fill:var(--ink)}
+
+@media (prefers-reduced-motion:reduce){.flip,.bar i{transition:none}}
+@media (max-width:380px){.q{font-size:18.5px}.a{font-size:16px}.note{font-size:20px}}
+</style>
+<div class="wrap">
+  <header>
+    <p class="eyebrow">Геометрия · 8 класс · 1 четверть</p>
+    <h1>Четырёхугольники</h1>
+  </header>
+
+  <nav class="tabs" role="tablist" aria-label="Режим">
+    <button role="tab" id="t-cards" aria-selected="true" aria-controls="v-cards">Карточки</button>
+    <button role="tab" id="t-tree" aria-selected="false" aria-controls="v-tree" tabindex="-1">Дерево</button>
+    <button role="tab" id="t-table" aria-selected="false" aria-controls="v-table" tabindex="-1">Таблица</button>
+  </nav>
+
+  <main>
+    <section id="v-cards" role="tabpanel" aria-labelledby="t-cards" class="stack">
+      <div class="chips" id="topics" role="group" aria-label="Тема"></div>
+      <div class="seg" id="kinds" role="group" aria-label="Тип карточек"></div>
+      <div class="prog">
+        <div class="prog-row"><span id="pos"></span><span id="cnt"></span></div>
+        <div class="bar" id="bar"><i></i></div>
+      </div>
+      <div class="scene" id="scene"></div>
+      <div class="ctl">
+        <button class="nav" id="prev" aria-label="Предыдущая карточка">←</button>
+        <button class="again" id="again">Повторить</button>
+        <button class="know" id="know">Знаю</button>
+        <button class="nav" id="next" aria-label="Следующая карточка">→</button>
+      </div>
+      <div class="row2">
+        <button class="link" id="shuf">Перемешать</button>
+        <button class="link" id="reset">Сбросить отметки</button>
+      </div>
+    </section>
+
+    <section id="v-tree" role="tabpanel" aria-labelledby="t-tree" class="stack" hidden>
+      <div class="panel tree">
+        <p class="lead">Нажми на фигуру, чтобы открыть её карточки.</p>
+        <div id="treeBox"></div>
+        <ul class="lore">
+          <li><b>Дети знают всё, что умеют родители.</b> Прямоугольник и ромб получают все свойства параллелограмма и добавляют своё.</li>
+          <li><b>Квадрат — наследник обоих.</b> Поэтому у него есть все свойства сразу.</li>
+          <li><b>Трапеция живёт отдельно.</b> У неё только одна пара параллельных сторон, поэтому параллелограмм её не родитель.</li>
+        </ul>
+      </div>
+    </section>
+
+    <section id="v-table" role="tabpanel" aria-labelledby="t-table" class="stack" hidden>
+      <div class="tools">
+        <button class="chip" id="quiz" aria-pressed="false">Проверить себя</button>
+        <span class="legend">✓ всегда · ✕ не обязательно</span>
+      </div>
+      <div class="tw" id="tw"></div>
+      <div class="stack" id="rules"></div>
+    </section>
+  </main>
+</div>
+
+<script>
+/* ===== Чертежи ===== */
+const SH={
+  quad:[[28,104],[46,34],[150,22],[168,112]],
+  para:[[22,112],[58,34],[168,34],[132,112]],
+  trap:[[16,112],[56,34],[128,34],[176,112]],
+  trapIso:[[20,112],[60,34],[130,34],[170,112]],
+  trapRight:[[22,112],[22,34],[122,34],[176,112]],
+  rect:[[24,112],[24,36],[166,36],[166,112]],
+  rhomb:[[26,114],[71,36],[161,36],[116,114]],
+  sq:[[52,116],[52,32],[138,32],[138,116]]
+};
+const PAR={para:[[0,2],[1,3]],rect:[[0,2],[1,3]],rhomb:[[0,2],[1,3]],sq:[[0,2],[1,3]],trap:[[1,3]],trapIso:[[1,3]],trapRight:[[1,3]]};
+const EQ={para:[1,2,1,2],rect:[1,2,1,2],rhomb:[1,1,1,1],sq:[1,1,1,1],trapIso:[1,0,1,0]};
+const ANG={para:[1,2,1,2],rhomb:[1,2,1,2],trapIso:[1,2,2,1]};
+const RT={rect:[0,1,2,3],sq:[0,1,2,3],trapRight:[0,1]};
+
+const f1=n=>Math.round(n*10)/10;
+const P=a=>f1(a[0])+','+f1(a[1]);
+const vsub=(a,b)=>[a[0]-b[0],a[1]-b[1]];
+const vadd=(a,b)=>[a[0]+b[0],a[1]+b[1]];
+const vmul=(a,k)=>[a[0]*k,a[1]*k];
+const vmid=(a,b)=>[(a[0]+b[0])/2,(a[1]+b[1])/2];
+const vun=a=>{const l=Math.hypot(a[0],a[1])||1;return [a[0]/l,a[1]/l]};
+const seg=(a,b,cls)=>`<line class="${cls||'mk'}" x1="${f1(a[0])}" y1="${f1(a[1])}" x2="${f1(b[0])}" y2="${f1(b[1])}"/>`;
+const poly=(pts,cls)=>`<polyline class="${cls||'mk'}" points="${pts.map(P).join(' ')}"/>`;
+
+function ticks(a,b,n){
+  if(!n)return '';
+  const m=vmid(a,b),u=vun(vsub(b,a)),nv=[-u[1],u[0]];
+  let s='';
+  for(let i=0;i<n;i++){
+    const c=vadd(m,vmul(u,(i-(n-1)/2)*5));
+    s+=seg(vadd(c,vmul(nv,5)),vsub(c,vmul(nv,5)));
+  }
+  return s;
+}
+function arrows(a,b,n){
+  const m=vmid(a,b),u=vun(vsub(b,a)),nv=[-u[1],u[0]];
+  let s='';
+  for(let i=0;i<n;i++){
+    const c=vadd(m,vmul(u,(i-(n-1)/2)*6));
+    const back=vsub(c,vmul(u,3));
+    s+=poly([vadd(back,vmul(nv,4.5)),vadd(c,vmul(u,3)),vsub(back,vmul(nv,4.5))]);
+  }
+  return s;
+}
+function rightAt(Q,A,B,s){
+  s=s||9;
+  const a=vun(vsub(A,Q)),b=vun(vsub(B,Q));
+  const pa=vadd(Q,vmul(a,s)),pb=vadd(Q,vmul(b,s));
+  return poly([pa,vadd(pa,vmul(b,s)),pb]);
+}
+function arcAt(Q,A,B,r){
+  const u=vun(vsub(A,Q)),v=vun(vsub(B,Q));
+  const sw=(u[0]*v[1]-u[1]*v[0])>0?1:0;
+  const a=vadd(Q,vmul(u,r)),b=vadd(Q,vmul(v,r));
+  return `<path class="mk" d="M${P(a)} A${r},${r} 0 0 ${sw} ${P(b)}"/>`;
+}
+function angArcs(p,i,n){
+  let s='';
+  for(let k=0;k<n;k++)s+=arcAt(p[i],p[(i+3)%4],p[(i+1)%4],13+k*4.5);
+  return s;
+}
+function inter(a,b,c,d){
+  const x1=a[0],y1=a[1],x2=b[0],y2=b[1],x3=c[0],y3=c[1],x4=d[0],y4=d[1];
+  const t=((x1-x3)*(y3-y4)-(y1-y3)*(x3-x4))/((x1-x2)*(y3-y4)-(y1-y2)*(x3-x4));
+  return [x1+t*(x2-x1),y1+t*(y2-y1)];
+}
+function lbl(t,pt,c,dist){
+  const d=vun(vsub(pt,c)),q=vadd(pt,vmul(d,dist||11));
+  return `<text class="lt" x="${f1(q[0])}" y="${f1(q[1]+4.5)}" text-anchor="middle">${t}</text>`;
+}
+
+/* Флаги: par ∥-стрелки · eq штрихи равных сторон · rt прямые углы · ang равные углы · tri два треугольника
+   diag диагонали · mid штрихи на половинках · perp ⊥ в точке O · bis диагонали-биссектрисы
+   eqd выделить диагонали · ml средняя линия · mini без букв (для дерева и таблицы) */
+function figInner(shape,flags){
+  const F=new Set((flags||'').split(' ').filter(Boolean));
+  const mini=F.has('mini'),p=SH[shape];
+  const c=[p.reduce((s,q)=>s+q[0],0)/4,p.reduce((s,q)=>s+q[1],0)/4];
+  let s=`<polygon class="body" points="${p.map(P).join(' ')}"/>`;
+  if(F.has('tri'))s+=`<polygon class="sh2" points="${[p[0],p[1],p[2]].map(P).join(' ')}"/>`+seg(p[0],p[2],'dg2');
+  if(F.has('par'))(PAR[shape]||[]).forEach((pr,k)=>{
+    s+=arrows(p[pr[0]],p[(pr[0]+1)%4],k+1)+arrows(p[(pr[1]+1)%4],p[pr[1]],k+1);
+  });
+  if(F.has('eq')&&EQ[shape])EQ[shape].forEach((n,i)=>{s+=ticks(p[i],p[(i+1)%4],n)});
+  if(F.has('rt')&&RT[shape])RT[shape].forEach(i=>{s+=rightAt(p[i],p[(i+3)%4],p[(i+1)%4])});
+  if(F.has('ang')&&ANG[shape])ANG[shape].forEach((n,i)=>{s+=angArcs(p,i,n)});
+  if(F.has('diag')){
+    const O=inter(p[0],p[2],p[1],p[3]),dc=F.has('eqd')?'dg2':'dg';
+    s+=seg(p[0],p[2],dc)+seg(p[1],p[3],dc);
+    if(F.has('mid')){
+      const two=(shape==='rect'||shape==='sq')?1:2;
+      s+=ticks(p[0],O,1)+ticks(O,p[2],1)+ticks(p[1],O,two)+ticks(O,p[3],two);
+    }
+    if(F.has('perp'))s+=rightAt(O,p[1],p[2],8);
+    if(F.has('bis'))for(let i=0;i<4;i++){
+      const T=p[(i+2)%4];
+      s+=arcAt(p[i],p[(i+3)%4],T,15)+arcAt(p[i],T,p[(i+1)%4],15);
+    }
+    if(!mini)s+=`<circle class="dot" cx="${f1(O[0])}" cy="${f1(O[1])}" r="2.6"/><text class="lt" x="${f1(O[0]+8)}" y="${f1(O[1]-6)}" text-anchor="middle">O</text>`;
+  }
+  if(F.has('ml')){
+    const M=vmid(p[0],p[1]),N=vmid(p[2],p[3]);
+    s+=seg(M,N,'dg2')+ticks(p[0],M,1)+ticks(M,p[1],1)+ticks(p[2],N,2)+ticks(N,p[3],2);
+    if(!mini)s+=`<text class="lt" x="${f1(M[0]-11)}" y="${f1(M[1]+4.5)}" text-anchor="middle">M</text><text class="lt" x="${f1(N[0]+11)}" y="${f1(N[1]+4.5)}" text-anchor="middle">N</text>`;
+  }
+  if(!mini)['A','B','C','D'].forEach((t,i)=>{s+=lbl(t,p[i],c)});
+  return s;
+}
+const fig=(shape,flags,label)=>`<svg class="fsv" viewBox="0 0 190 140" role="img" aria-label="${label||'Чертёж фигуры'}">${figInner(shape,flags)}</svg>`;
+/* ===== Карточки ===== */
+const TOPICS=[
+  {id:'quad',name:'Четырёхугольник',c:'--quad'},
+  {id:'para',name:'Параллелограмм',c:'--para'},
+  {id:'trap',name:'Трапеция',c:'--trap'},
+  {id:'rect',name:'Прямоугольник',c:'--rect'},
+  {id:'rhomb',name:'Ромб',c:'--rhomb'},
+  {id:'sq',name:'Квадрат',c:'--sq'},
+  {id:'cmp',name:'Что чем является',c:'--cmp'}
+];
+const KINDS={def:'Определение',prop:'Свойство',sign:'Признак',cmp:'Вопрос на понимание',task:'Задача'};
+const CARDS=[],cnt={};
+/* f:[фигура, флаги] — чертёж на обороте; fq — чертёж на лицевой стороне (по умолчанию чистая фигура); h — запоминалка */
+function C(t,k,q,a,o){cnt[t]=(cnt[t]||0)+1;CARDS.push(Object.assign({id:t+cnt[t],t:t,k:k,q:q,a:a},o||{}))}
+
+/* --- Четырёхугольник --- */
+C('quad','def','Что такое четырёхугольник?',
+  'Фигура из <b>четырёх точек</b> (вершин) и <b>четырёх отрезков</b> (сторон), которые последовательно их соединяют. Никакие три вершины не лежат на одной прямой, а стороны не пересекаются.',
+  {f:['quad',''],h:'Четыре вершины, четыре стороны, четыре угла. Всё считаем по четвёркам.'});
+C('quad','def','Какие вершины и стороны называют соседними, а какие противоположными?',
+  ['<b>Соседние вершины</b> — концы одной стороны (A и B).','<b>Противоположные вершины</b> — не соседние (A и C).','<b>Соседние стороны</b> имеют общую вершину (AB и BC).','<b>Противоположные стороны</b> общей вершины не имеют (AB и CD).'],
+  {f:['quad',''],h:'Соседи стоят рядом, противоположные смотрят друг на друга через фигуру.'});
+C('quad','def','Что такое диагональ? Сколько диагоналей у четырёхугольника?',
+  'Диагональ — отрезок, соединяющий две <b>противоположные</b> вершины. У четырёхугольника их <b>две</b>: AC и BD.',
+  {f:['quad','diag'],h:'Диагональ идёт через всю фигуру от угла к противоположному углу.'});
+C('quad','prop','Чему равна сумма углов выпуклого четырёхугольника?',
+  '<b>360°</b>. Диагональ делит четырёхугольник на два треугольника: 180° + 180° = 360°.',
+  {f:['quad','tri'],h:'Проверка на квадрате: 4 · 90° = 360°.'});
+C('quad','def','Что такое периметр четырёхугольника?',
+  'Сумма длин всех его сторон: <b>P = AB + BC + CD + DA</b>.',
+  {h:'Периметр — забор вокруг фигуры: обошёл все стороны и сложил.'});
+C('quad','task','Три угла четырёхугольника равны 80°, 100° и 90°. Найди четвёртый угол.',
+  ['Сумма углов четырёхугольника 360°.','∠4 = 360° − (80° + 100° + 90°) = 360° − 270° = <b>90°</b>.']);
+C('quad','task','Углы четырёхугольника относятся как 1 : 2 : 3 : 4. Найди все углы.',
+  ['Всего частей: 1 + 2 + 3 + 4 = 10.','Одна часть: 360° : 10 = 36°.','Углы: <b>36°, 72°, 108°, 144°</b>.'],
+  {h:'Сумма всегда 360°: делим её на число частей.'});
+
+/* --- Параллелограмм --- */
+C('para','def','Что такое параллелограмм?',
+  'Четырёхугольник, у которого <b>противоположные стороны попарно параллельны</b>: AB ∥ CD и BC ∥ AD.',
+  {f:['para','par'],h:'Две пары параллельных сторон. Стрелочки на чертеже показывают, какие стороны идут «в одну сторону».'});
+C('para','prop','Что можно сказать о противоположных сторонах и углах параллелограмма?',
+  ['Противоположные стороны <b>равны</b>: AB = CD, BC = AD.','Противоположные углы <b>равны</b>: ∠A = ∠C, ∠B = ∠D.'],
+  {f:['para','eq ang'],h:'Противоположное — равно. Штрихи и дуги на чертеже показывают равные пары.'});
+C('para','prop','Чему равна сумма соседних углов параллелограмма?',
+  '<b>180°</b>: ∠A + ∠B = 180°. Это односторонние углы при параллельных прямых.',
+  {f:['para','ang'],h:'Соседние углы вместе дают 180°. Знаешь один угол — знаешь все.'});
+C('para','prop','Что происходит с диагоналями параллелограмма?',
+  'Точка пересечения <b>делит каждую диагональ пополам</b>: AO = OC, BO = OD.',
+  {f:['para','diag mid'],h:'Две палки скрещены ровно посередине. Точка O — центр фигуры.'});
+C('para','prop','На какие части диагональ делит параллелограмм?',
+  'На <b>два равных треугольника</b>: △ABC = △CDA.',
+  {f:['para','tri'],h:'Разрезал по диагонали — получил две одинаковые половинки.'});
+C('para','sign','Назови три признака параллелограмма.',
+  ['Две стороны <b>равны и параллельны</b>.','<b>Противоположные стороны</b> попарно равны.','<b>Диагонали</b> пересекаются и точкой пересечения делятся пополам.'],
+  {f:['para','diag mid par'],h:'Три признака — три «равно»: равные и параллельные стороны, равные пары сторон, равные половинки диагоналей.'});
+C('para','task','Один угол параллелограмма равен 70°. Найди остальные углы.',
+  ['Противоположный угол тоже 70°.','Соседние: 180° − 70° = 110° (их два).','Ответ: <b>70°, 110°, 70°, 110°</b>.']);
+C('para','task','Стороны параллелограмма 5 см и 8 см. Найди периметр.',
+  ['Противоположные стороны равны, поэтому в периметре две пятёрки и две восьмёрки.','P = 2 · (5 + 8) = <b>26 см</b>.']);
+C('para','task','Периметр параллелограмма 40 см, одна сторона на 4 см больше другой. Найди стороны.',
+  ['Полупериметр: a + b = 40 : 2 = 20.','a = b + 4, значит 2b + 4 = 20, b = 8, a = 12.','Стороны: <b>12 см и 8 см</b> (по две).']);
+C('para','task','Диагонали параллелограмма ABCD пересекаются в точке O. AC = 10 см, BD = 14 см. Найди AO и BO.',
+  ['Диагонали делятся точкой пересечения пополам.','AO = 10 : 2 = <b>5 см</b>, BO = 14 : 2 = <b>7 см</b>.']);
+
+/* --- Трапеция --- */
+C('trap','def','Что такое трапеция?',
+  'Четырёхугольник, у которого <b>две стороны параллельны</b>, а две другие — нет.',
+  {f:['trap','par'],h:'Ровно одна пара параллельных сторон. Появилась вторая пара — это уже параллелограмм.'});
+C('trap','def','Как называются стороны трапеции?',
+  ['Параллельные стороны — <b>основания</b> (BC и AD).','Непараллельные — <b>боковые стороны</b> (AB и CD).'],
+  {f:['trap','par'],h:'Основания — верх и низ, боковые — «ноги».'});
+C('trap','prop','Чему равна сумма углов трапеции, прилежащих к боковой стороне?',
+  '<b>180°</b>: ∠A + ∠B = 180° и ∠C + ∠D = 180°. Это односторонние углы при параллельных основаниях и секущей (боковой стороне).',
+  {f:['trap','par'],h:'Каждая «нога» держит пару углов, которые в сумме дают 180°.'});
+C('trap','def','Какая трапеция называется равнобедренной?',
+  'Та, у которой <b>боковые стороны равны</b>: AB = CD.',
+  {f:['trapIso','par eq'],h:'Равные ноги — как у равнобедренного треугольника.'});
+C('trap','prop','Свойства равнобедренной трапеции?',
+  ['Углы при каждом основании <b>равны</b> (∠A = ∠D, ∠B = ∠C).','Диагонали <b>равны</b> (AC = BD).'],
+  {f:['trapIso','ang eq'],h:'Равные ноги дают равные углы у основания и равные диагонали.'});
+C('trap','def','Какая трапеция называется прямоугольной?',
+  'Та, у которой <b>одна боковая сторона перпендикулярна основаниям</b>. У неё два прямых угла (при этой стороне).',
+  {f:['trapRight','par rt'],h:'Одна «нога» стоит прямо, как стена.'});
+C('trap','def','Что такое средняя линия трапеции? Чему она равна?',
+  ['Отрезок, соединяющий <b>середины боковых сторон</b>.','Параллельна основаниям и равна их <b>полусумме</b>: MN = (BC + AD) : 2.'],
+  {f:['trap','par ml'],h:'Средняя линия — среднее арифметическое оснований, ровно посередине.'});
+C('trap','task','В трапеции ABCD основания BC и AD, ∠A = 65°. Найди ∠B.',
+  ['∠A и ∠B прилежат к боковой стороне AB, их сумма 180°.','∠B = 180° − 65° = <b>115°</b>.']);
+C('trap','task','В равнобедренной трапеции угол при меньшем основании 110°. Найди остальные углы.',
+  ['Углы при одном основании равны: оба по 110°.','Углы при большем основании: 180° − 110° = 70°, оба.','Ответ: <b>110°, 110°, 70°, 70°</b>.']);
+C('trap','task','Равнобедренная трапеция: основания 4 см и 10 см, боковая сторона 5 см. Найди периметр.',
+  ['Боковые стороны равны: обе по 5 см.','P = 4 + 10 + 5 + 5 = <b>24 см</b>.']);
+C('trap','task','Основания трапеции 6 см и 10 см. Найди среднюю линию.',
+  ['Средняя линия равна полусумме оснований.','(6 + 10) : 2 = <b>8 см</b>.']);
+/* --- Прямоугольник --- */
+C('rect','def','Что такое прямоугольник?',
+  'Параллелограмм, у которого <b>все углы прямые</b>.',
+  {f:['rect','rt'],h:'Прямоугольник = параллелограмм + прямой угол.'});
+C('rect','prop','Какие свойства у прямоугольника?',
+  ['Все свойства параллелограмма.','Главное своё: <b>диагонали равны</b> (AC = BD).','Диагонали делятся точкой пересечения пополам, поэтому AO = BO = CO = DO.'],
+  {f:['rect','diag mid eqd'],h:'Прямоугольник: диагонали Равны. Два одинаковых «карандаша» скрещены посередине.'});
+C('rect','sign','Как доказать, что параллелограмм — прямоугольник?',
+  ['Достаточно <b>одного</b> условия:','— один угол прямой, или','— диагонали равны.'],
+  {f:['rect','rt diag eqd'],h:'Параллелограмм + один прямой угол (или равные диагонали) = прямоугольник.'});
+C('rect','prop','Чему равна медиана прямоугольного треугольника, проведённая к гипотенузе?',
+  ['<b>Половине гипотенузы.</b>','Достроим треугольник до прямоугольника: диагонали равны и делятся пополам, поэтому медиана — половина диагонали.'],
+  {f:['rect','diag mid eqd'],h:'Гипотенуза — диагональ прямоугольника, медиана — её половинка.'});
+C('rect','task','Стороны прямоугольника 6 см и 9 см. Найди периметр.',
+  ['P = 2 · (6 + 9) = <b>30 см</b>.']);
+C('rect','task','Диагональ прямоугольника образует с одной из сторон угол 25°. Какой угол она образует с другой стороной?',
+  ['Угол прямоугольника 90°, диагональ делит его на две части.','90° − 25° = <b>65°</b>.']);
+C('rect','task','В прямоугольнике ABCD диагонали пересекаются в точке O, AC = 14 см. Найди BO.',
+  ['Диагонали равны: BD = AC = 14 см.','Точка O делит диагональ пополам: BO = 14 : 2 = <b>7 см</b>.']);
+C('rect','task','Медиана прямоугольного треугольника, проведённая к гипотенузе, равна 6 см. Найди гипотенузу.',
+  ['Медиана к гипотенузе — половина гипотенузы.','Гипотенуза = 6 · 2 = <b>12 см</b>.']);
+
+/* --- Ромб --- */
+C('rhomb','def','Что такое ромб?',
+  'Параллелограмм, у которого <b>все стороны равны</b>.',
+  {f:['rhomb','eq'],h:'Ромб = параллелограмм + равные стороны.'});
+C('rhomb','prop','Какие свойства у ромба?',
+  ['Все свойства параллелограмма.','Диагонали <b>перпендикулярны</b> (пересекаются под 90°).','Диагонали — <b>биссектрисы</b> его углов.'],
+  {f:['rhomb','diag perp bis'],h:'Ромб: диагонали Перпендикулярны и режут углы пополам. Как перекрёсток двух дорог.'});
+C('rhomb','prop','На какие фигуры диагонали делят ромб?',
+  'На <b>четыре равных прямоугольных треугольника</b>. Катеты — половины диагоналей, гипотенуза — сторона ромба.',
+  {f:['rhomb','diag perp mid'],h:'Ромб — ромашка из четырёх одинаковых прямоугольных лепестков.'});
+C('rhomb','sign','Как доказать, что параллелограмм — ромб?',
+  ['Достаточно <b>одного</b> условия:','— две соседние стороны равны, или','— диагонали перпендикулярны, или','— диагональ делит угол пополам.'],
+  {f:['rhomb','diag perp bis'],h:'Параллелограмм, у которого есть хоть одна «ромбовая» черта, уже ромб.'});
+C('rhomb','task','Сторона ромба 7 см. Найди периметр.',
+  ['Все стороны равны.','P = 4 · 7 = <b>28 см</b>.']);
+C('rhomb','task','Периметр ромба 36 см. Найди сторону.',
+  ['Все 4 стороны равны.','a = 36 : 4 = <b>9 см</b>.']);
+C('rhomb','task','Один угол ромба 60°. Найди остальные углы.',
+  ['Противоположный угол тоже 60°.','Соседние: 180° − 60° = 120° (их два).','Ответ: <b>60°, 120°, 60°, 120°</b>.']);
+C('rhomb','task','Диагональ ромба делит его угол 80° на два угла. Чему равен каждый?',
+  ['Диагональ ромба — биссектриса угла.','80° : 2 = <b>40°</b> и 40°.']);
+
+/* --- Квадрат --- */
+C('sq','def','Что такое квадрат?',
+  ['Прямоугольник, у которого <b>все стороны равны</b>.','Или то же самое: ромб, у которого <b>все углы прямые</b>.'],
+  {f:['sq','rt eq'],h:'Квадрат = прямоугольник + ромб в одной фигуре.'});
+C('sq','prop','Перечисли свойства квадрата.',
+  ['Все стороны равны, все углы 90°.','Диагонали равны (как у прямоугольника).','Диагонали перпендикулярны и делят углы на 45° (как у ромба).','Диагонали делятся точкой пересечения пополам.'],
+  {f:['sq','diag perp mid bis'],h:'Квадрат — король: у него есть все свойства сразу, можно ставить ✓ в каждой строке таблицы.'});
+C('sq','prop','Какой угол образует диагональ квадрата со стороной?',
+  '<b>45°</b>. Диагональ делит прямой угол 90° пополам.',
+  {f:['sq','diag bis'],h:'90° разрезали пополам, получили 45°.'});
+C('sq','task','Сторона квадрата 5 см. Найди периметр.',
+  ['P = 4 · 5 = <b>20 см</b>.']);
+C('sq','task','Периметр квадрата 24 см. Найди сторону.',
+  ['Все стороны равны: 24 : 4 = <b>6 см</b>.']);
+C('sq','task','В квадрате ABCD диагонали пересекаются в точке O. Найди ∠AOB.',
+  ['Диагонали квадрата перпендикулярны.','∠AOB = <b>90°</b>.']);
+
+/* --- Что чем является --- */
+C('cmp','cmp','Квадрат — это ромб?',
+  '<b>Да.</b> У квадрата все стороны равны, а ромб — это параллелограмм с равными сторонами.',
+  {f:['sq','eq'],h:'Квадрат — частный случай ромба.'});
+C('cmp','cmp','Квадрат — это прямоугольник?',
+  '<b>Да.</b> У квадрата все углы прямые, а прямоугольник — это параллелограмм с прямыми углами.',
+  {f:['sq','rt'],h:'Квадрат — частный случай прямоугольника.'});
+C('cmp','cmp','Любой ромб — квадрат?',
+  '<b>Нет.</b> У ромба углы бывают не прямыми. Ромб становится квадратом, только когда все углы по 90°.',
+  {f:['rhomb','eq'],h:'Квадрат — это ромб с прямыми углами, но не наоборот.'});
+C('cmp','cmp','Любой прямоугольник — квадрат?',
+  '<b>Нет.</b> У прямоугольника стороны могут быть разной длины. Квадратом он станет, когда все стороны равны.',
+  {f:['rect','rt'],h:'Квадрат — это прямоугольник с равными сторонами, но не наоборот.'});
+C('cmp','cmp','Прямоугольник и ромб — это параллелограммы?',
+  '<b>Да, оба.</b> Каждый из них — параллелограмм с дополнительным условием: у прямоугольника прямые углы, у ромба равные стороны.',
+  {f:['para','par'],h:'Параллелограмм — родитель. Прямоугольник и ромб — его дети.'});
+C('cmp','cmp','Параллелограмм — это трапеция?',
+  '<b>Нет</b> (по школьному определению). У трапеции только одна пара параллельных сторон, а у параллелограмма две.',
+  {f:['trap','par'],h:'У трапеции параллельны только основания, ноги идут врозь.'});
+C('cmp','cmp','Может ли ромб быть прямоугольником?',
+  '<b>Да</b>, но только если это квадрат: стороны равны (ромб) и углы прямые (прямоугольник).',
+  {f:['sq','rt eq'],h:'Ромб + прямоугольник = квадрат.'});
+C('cmp','cmp','Угадай фигуру по диагоналям: они равны, перпендикулярны и делятся пополам.',
+  ['<b>Квадрат.</b>','Равные диагонали — признак прямоугольника, перпендикулярные — ромба. Нужны оба условия.','Только равные (и делятся пополам) — прямоугольник. Только перпендикулярные — ромб.'],
+  {f:['sq','diag perp mid eqd'],h:'Равные — прямоугольник, перпендикулярные — ромб, и то и другое — квадрат.'});
+/* ===== Приложение ===== */
+(function(){
+const $=s=>document.querySelector(s);
+const topicsEl=$('#topics'),kindsEl=$('#kinds'),scene=$('#scene'),posEl=$('#pos'),cntEl=$('#cnt'),barI=$('#bar i');
+const prevB=$('#prev'),nextB=$('#next'),againB=$('#again'),knowB=$('#know'),shufB=$('#shuf'),resetB=$('#reset');
+let topic='all',kind='all',deck=[],pos=0,back=false,shuffled=false,status={},rank={};
+try{status=JSON.parse(localStorage.getItem('kv8-status')||'{}')||{}}catch(e){status={}}
+const save=()=>{try{localStorage.setItem('kv8-status',JSON.stringify(status))}catch(e){}};
+const tOf=id=>TOPICS.find(t=>t.id===id);
+
+/* --- фильтры --- */
+topicsEl.innerHTML=['<button class="chip" data-t="all" aria-pressed="true">Все</button>']
+  .concat(TOPICS.map(t=>`<button class="chip" style="--c:var(${t.c})" data-t="${t.id}" aria-pressed="false">${t.name}</button>`)).join('');
+CARDS.forEach(c=>{rank[c.id]=Math.random()});
+
+function inTopic(c){return topic==='all'||c.t===topic}
+function computeDeck(keepId){
+  deck=CARDS.filter(c=>inTopic(c)&&(kind==='all'||(kind==='theory'&&c.k!=='task')||(kind==='task'&&c.k==='task')||(kind==='again'&&status[c.id]==='a')));
+  if(shuffled)deck.sort((a,b)=>rank[a.id]-rank[b.id]);
+  if(keepId){const i=deck.findIndex(c=>c.id===keepId);if(i>=0)pos=i}
+  if(pos>=deck.length)pos=Math.max(0,deck.length-1);
+}
+function renderKinds(){
+  const again=CARDS.filter(c=>inTopic(c)&&status[c.id]==='a').length;
+  const K=[['all','Все'],['theory','Теория'],['task','Задачи'],['again','Повторить ('+again+')']];
+  kindsEl.innerHTML=K.map(k=>`<button data-k="${k[0]}" aria-pressed="${kind===k[0]}">${k[1]}</button>`).join('');
+}
+
+/* --- карточка --- */
+function answerHTML(a){return Array.isArray(a)?'<ul>'+a.map(x=>'<li>'+x+'</li>').join('')+'</ul>':a}
+function cardHTML(c){
+  const T=tOf(c.t),st=status[c.id];
+  const stb=st==='k'?'<span class="st k">✓ знаю</span>':st==='a'?'<span class="st a">↺ повторить</span>':'';
+  const head=`<div class="fh"><span class="tag">${T.name}</span><span class="kind">${KINDS[c.k]}${stb}</span></div>`;
+  const front=c.fq?fig(c.fq[0],c.fq[1]):(c.f?fig(c.f[0],''):'');
+  const backFig=c.f?fig(c.f[0],c.f[1]):'';
+  return `<div class="card${back?' is-back':''}" id="card" style="--c:var(${T.c})" tabindex="0" role="button" aria-label="Карточка. Нажми, чтобы перевернуть">
+    <div class="flip">
+      <div class="face front"${back?' inert':''}>${head}
+        <p class="q">${c.q}</p>
+        <div class="fig">${front}</div>
+        <p class="tip">Нажми на карточку, чтобы увидеть ответ</p>
+      </div>
+      <div class="face back"${back?'':' inert'}>${head}
+        <p class="lab">Ответ</p>
+        <div class="a">${answerHTML(c.a)}</div>
+        ${backFig?`<div class="fig">${backFig}</div>`:''}
+        ${c.h?`<div class="note"><small>Запоминалка</small>${c.h}</div>`:''}
+      </div>
+    </div>
+  </div>`;
+}
+function setBack(v){
+  back=v;
+  const el=$('#card');if(!el)return;
+  el.classList.toggle('is-back',v);
+  const f=el.querySelector('.front'),b=el.querySelector('.back');
+  f.toggleAttribute('inert',v);b.toggleAttribute('inert',!v);
+}
+function render(){
+  const n=deck.length;
+  topicsEl.querySelectorAll('.chip').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.t===topic)));
+  renderKinds();
+  let k=0,a=0;deck.forEach(c=>{if(status[c.id]==='k')k++;else if(status[c.id]==='a')a++});
+  cntEl.innerHTML=`знаю <b>${k}</b> · повторить <b>${a}</b> · новые <b>${n-k-a}</b>`;
+  const col=topic==='all'?'var(--ink)':'var(--'+topic+')';
+  barI.style.background=col;
+  [prevB,nextB,againB,knowB].forEach(b=>b.disabled=!n);
+  if(!n){
+    posEl.textContent='0 из 0';barI.style.width='0';
+    scene.innerHTML=kind==='again'
+      ?'<div class="empty"><b>Здесь пока пусто</b><span>Отмечай карточки кнопкой «Повторить», и они соберутся тут.</span></div>'
+      :'<div class="empty"><b>Карточек нет</b><span>Выбери другую тему или тип.</span></div>';
+    return;
+  }
+  posEl.innerHTML=`Карточка <b>${pos+1}</b> из <b>${n}</b>`;
+  barI.style.width=((pos+1)/n*100)+'%';
+  scene.innerHTML=cardHTML(deck[pos]);
+}
+function go(d){if(!deck.length)return;pos=(pos+d+deck.length)%deck.length;back=false;render()}
+function mark(s){
+  const c=deck[pos];if(!c)return;
+  status[c.id]=s;save();
+  if(kind==='again'&&s==='k'){computeDeck();back=false;render()}
+  else go(1);
+}
+function reload(){computeDeck();back=false;render()}
+
+topicsEl.addEventListener('click',e=>{
+  const b=e.target.closest('[data-t]');if(!b)return;
+  topic=b.dataset.t;pos=0;reload();
+  topicsEl.scrollLeft=b.offsetLeft-topicsEl.clientWidth/2+b.offsetWidth/2;
+});
+kindsEl.addEventListener('click',e=>{
+  const b=e.target.closest('[data-k]');if(!b)return;
+  kind=b.dataset.k;pos=0;reload();
+});
+let swiped=0;
+scene.addEventListener('click',e=>{
+  if(Date.now()-swiped<450||!e.target.closest('#card'))return;
+  setBack(!back);
+});
+scene.addEventListener('keydown',e=>{
+  if(e.target.id==='card'&&(e.key===' '||e.key==='Enter')){e.preventDefault();setBack(!back)}
+});
+let sx=0,sy=0;
+scene.addEventListener('touchstart',e=>{const t=e.touches[0];sx=t.clientX;sy=t.clientY},{passive:true});
+scene.addEventListener('touchend',e=>{
+  const t=e.changedTouches[0],dx=t.clientX-sx,dy=t.clientY-sy;
+  if(Math.abs(dx)>60&&Math.abs(dy)<45){swiped=Date.now();go(dx<0?1:-1)}
+},{passive:true});
+prevB.onclick=()=>go(-1);nextB.onclick=()=>go(1);
+againB.onclick=()=>mark('a');knowB.onclick=()=>mark('k');
+shufB.onclick=()=>{
+  shuffled=!shuffled;
+  if(shuffled)CARDS.forEach(c=>{rank[c.id]=Math.random()});
+  shufB.textContent=shuffled?'По порядку':'Перемешать';
+  pos=0;reload();
+};
+let rt=0;
+resetB.onclick=()=>{
+  if(resetB.dataset.arm){
+    clearTimeout(rt);delete resetB.dataset.arm;resetB.textContent='Сбросить отметки';
+    status={};save();pos=0;reload();
+  }else{
+    resetB.dataset.arm='1';resetB.textContent='Нажми ещё раз, и все отметки сбросятся';
+    rt=setTimeout(()=>{delete resetB.dataset.arm;resetB.textContent='Сбросить отметки'},3500);
+  }
+};
+
+/* --- вкладки --- */
+const TABS=['cards','tree','table'];
+function showTab(n){
+  TABS.forEach(t=>{
+    const sel=t===n,b=$('#t-'+t);
+    b.setAttribute('aria-selected',String(sel));b.tabIndex=sel?0:-1;$('#v-'+t).hidden=!sel;
+  });
+}
+document.querySelector('.tabs').addEventListener('click',e=>{
+  const b=e.target.closest('[role=tab]');if(b)showTab(b.id.slice(2));
+});
+document.querySelector('.tabs').addEventListener('keydown',e=>{
+  const i=TABS.findIndex(t=>$('#t-'+t).getAttribute('aria-selected')==='true');
+  if(e.key==='ArrowRight'||e.key==='ArrowLeft'){
+    const n=TABS[(i+(e.key==='ArrowRight'?1:2))%3];showTab(n);$('#t-'+n).focus();
+  }
+});
+document.addEventListener('keydown',e=>{
+  if($('#v-cards').hidden||/INPUT|TEXTAREA/.test(e.target.tagName)||e.target.closest('.tabs'))return;
+  if(e.key==='ArrowRight')go(1);
+  if(e.key==='ArrowLeft')go(-1);
+});
+
+/* --- дерево --- */
+(function(){
+  const W=170,H=96;
+  const N=[
+    {id:'quad',x:95,y:4,t:'Четырёхугольник',s:['∑ углов','= 360°'],sh:'quad'},
+    {id:'para',x:4,y:124,t:'Параллелограмм',s:['стороны ∥','попарно'],sh:'para'},
+    {id:'trap',x:186,y:124,t:'Трапеция',s:['одна пара','сторон ∥'],sh:'trap'},
+    {id:'rect',x:4,y:244,t:'Прямоугольник',s:['+ все углы','по 90°'],sh:'rect'},
+    {id:'rhomb',x:186,y:244,t:'Ромб',s:['+ все','стороны равны'],sh:'rhomb'},
+    {id:'sq',x:95,y:364,t:'Квадрат',s:['всё сразу:','углы 90° и','стороны равны'],sh:'sq'}
+  ];
+  const E=['M180 100V112H89V124','M180 100V112H271V124','M89 220V244','M89 220V232H271V244','M89 340V352H180V364','M271 340V352H180V364'];
+  let s=`<svg class="t fsv" viewBox="0 0 360 466" role="group" aria-label="Семейное дерево четырёхугольников">`;
+  s+=E.map(d=>`<path class="edge" d="${d}"/>`).join('');
+  N.forEach(n=>{
+    s+=`<g class="node" style="--c:var(--${n.id})" data-t="${n.id}" tabindex="0" role="button" aria-label="${n.t}: открыть карточки">
+      <rect class="nb" x="${n.x}" y="${n.y}" width="${W}" height="${H}" rx="14"/>
+      <text class="nm" x="${n.x+12}" y="${n.y+24}">${n.t}</text>
+      <svg x="${n.x+8}" y="${n.y+38}" width="62" height="46" viewBox="0 0 190 140">${figInner(n.sh,'mini')}</svg>
+      ${n.s.map((l,i)=>`<text class="sb" x="${n.x+78}" y="${n.y+(n.s.length===3?52:58)+i*15}">${l}</text>`).join('')}
+    </g>`;
+  });
+  s+='</svg>';
+  $('#treeBox').innerHTML=s;
+  const open=g=>{if(!g)return;topic=g.dataset.t;kind='all';pos=0;reload();showTab('cards');window.scrollTo(0,0)};
+  $('#treeBox').addEventListener('click',e=>open(e.target.closest('.node')));
+  $('#treeBox').addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();open(e.target.closest('.node'))}});
+})();
+
+/* --- таблица --- */
+(function(){
+  const cols=[['para','Паралле&shy;лограмм','para'],['rect','Прямо&shy;угольник','rect'],['rhomb','Ромб','rhomb'],['sq','Квадрат','sq']];
+  const rows=[
+    ['Стороны'],
+    ['Противоположные стороны параллельны',[1,1,1,1]],
+    ['Противоположные стороны равны',[1,1,1,1]],
+    ['Все стороны равны',[0,0,1,1]],
+    ['Углы'],
+    ['Противоположные углы равны',[1,1,1,1]],
+    ['Соседние углы в сумме 180°',[1,1,1,1]],
+    ['Все углы прямые',[0,1,0,1]],
+    ['Диагонали'],
+    ['Точкой пересечения делятся пополам',[1,1,1,1]],
+    ['Равны',[0,1,0,1]],
+    ['Перпендикулярны',[0,0,1,1]],
+    ['Делят углы пополам',[0,0,1,1]]
+  ];
+  let h='<table><thead><tr><th scope="col"></th>'+cols.map(c=>`<th scope="col" style="--c:var(--${c[0]})"><svg class="fsv" viewBox="0 0 190 140" aria-hidden="true">${figInner(c[2],'mini')}</svg>${c[1]}</th>`).join('')+'</tr></thead><tbody>';
+  let group='';
+  rows.forEach(r=>{
+    if(!r[1]){group=r[0];h+=`<tr class="grp"><th colspan="5" scope="colgroup">${r[0]}</th></tr>`;return}
+    h+=`<tr><th scope="row">${r[0]}</th>`+r[1].map((v,i)=>`<td><button class="cell" data-v="${v}" data-s="${v?'✓':'✕'}" aria-label="${cols[i][1].replace(/&shy;/g,'')}: ${v?'да':'не обязательно'}"></button></td>`).join('')+'</tr>';
+  });
+  h+='</tbody></table>';
+  const tw=$('#tw');tw.innerHTML=h;
+  $('#quiz').addEventListener('click',e=>{
+    const on=tw.classList.toggle('quiz');
+    e.currentTarget.setAttribute('aria-pressed',String(on));
+    e.currentTarget.textContent=on?'Показать всё':'Проверить себя';
+    tw.querySelectorAll('.cell').forEach(c=>c.classList.remove('open'));
+  });
+  tw.addEventListener('click',e=>{const c=e.target.closest('.cell');if(c&&tw.classList.contains('quiz'))c.classList.toggle('open')});
+  $('#rules').innerHTML=[
+    ['para','Противоположное равно. Соседние углы в сумме 180°.'],
+    ['rect','Прямоугольник: диагонали Равны. Ромб: диагонали Перпендикулярны.'],
+    ['sq','Квадрат — прямоугольник и ромб сразу: ✓ в каждой строке.']
+  ].map(r=>`<div class="note" style="--c:var(--${r[0]})">${r[1]}</div>`).join('');
+})();
+
+computeDeck();render();
+})();
+
+</script>
